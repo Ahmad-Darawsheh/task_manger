@@ -12,6 +12,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.8.0+1
   easy_localization: ^3.0.7+1
+  firebase_auth: ^5.5.2
+  firebase_core: ^3.13.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.0
@@ -21,6 +23,7 @@ dependencies:
   freezed: ^3.0.6
   freezed_annotation: ^3.0.0
   get_it: ^8.0.3
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -33,7 +36,6 @@ flutter:
   assets:
     - assets/images/
     - assets/svgs/
-
   # fonts:
   #   - family: Schyler
   #     fonts:
