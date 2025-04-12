@@ -20,7 +20,7 @@ class CustomFormTextFieldTasks extends StatelessWidget {
           child: Text(labelText, style: TextStyles.font24WhiteBold),
         ),
         Center(
-          child: Container(
+          child: SizedBox(
             width: 400.w,
             height: 75.h,
             child: TextFormField(

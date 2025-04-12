@@ -55,7 +55,7 @@ class LoginScreenBody extends StatelessWidget {
                       SizedBox(height: 30.h),
                       EmailAndPasswordFields(),
                       SizedBox(height: 30.h),
-                      LoginButtonAndForgetPassword()
+                      LoginButton()
                     ],
                   ),
                 ),

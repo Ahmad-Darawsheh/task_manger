@@ -18,7 +18,10 @@ class AddTasksCubit extends Cubit<AddTasksState> {
   TextEditingController taskDateController = TextEditingController();
   TextEditingController taskStartTimeController = TextEditingController();
   TextEditingController taskEndTimeController = TextEditingController();
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  
+  // Use lazy initialization for the form key
+  GlobalKey<FormState>? _formKey;
+  GlobalKey<FormState> get formKey => _formKey ??= GlobalKey<FormState>(debugLabel: 'addTaskFormKey');
   
   // Selected category
   String selectedCategory = '';
@@ -119,6 +122,7 @@ class AddTasksCubit extends Cubit<AddTasksState> {
     taskStartTimeController.clear();
     taskEndTimeController.clear();
     selectedCategory = '';
+    _formKey = null; // Reset form key to create a new one next time
     emit(const AddTasksInitial());
   }
   
@@ -129,6 +133,7 @@ class AddTasksCubit extends Cubit<AddTasksState> {
     taskDateController.dispose();
     taskStartTimeController.dispose();
     taskEndTimeController.dispose();
+    _formKey = null; // Clean up the form key
     return super.close();
   }
 }

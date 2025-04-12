@@ -8,6 +8,8 @@ import 'package:todo_task/features/authentication/presentation/widgets/register_
 import 'package:todo_task/features/authentication/presentation/widgets/register_widgets/register_text_fields.dart';
 
 class RegisterScreenBody extends StatelessWidget {
+  const RegisterScreenBody({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

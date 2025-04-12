@@ -11,11 +11,11 @@ class TaskListTile extends StatelessWidget {
   final VoidCallback? onMenuPressed;
 
   const TaskListTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.daysRemaining,
     this.onMenuPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
