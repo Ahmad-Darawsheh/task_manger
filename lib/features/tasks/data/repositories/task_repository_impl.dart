@@ -5,8 +5,8 @@ import 'package:todo_task/features/tasks/data/repositories/base_task_repository.
 class TaskRepositoryImpl implements BaseTaskRepository {
   final DatabaseHelper _databaseHelper;
 
-  TaskRepositoryImpl({DatabaseHelper? databaseHelper})
-      : _databaseHelper = databaseHelper ?? DatabaseHelper();
+  TaskRepositoryImpl({required DatabaseHelper databaseHelper})
+      : _databaseHelper = databaseHelper;
 
   @override
   Future<int> addTask(Task task) async {

@@ -7,4 +7,5 @@ class Routes {
   static const String tasksHome = '/home';
   static const String tasksWithCalender = '/tasks_with_calender';
   static const String addATask = '/add_a_task';
+  static const String bottomNavBarScreenHolder= '/bottom_nav_bar_screen_holder';
 }

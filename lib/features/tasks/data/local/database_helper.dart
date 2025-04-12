@@ -5,11 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:todo_task/features/tasks/data/models/task_model.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
-  factory DatabaseHelper() => _instance;
-  
-  static Database? _database;
-  
   // Table names
   static const String tasksTable = 'tasks';
   
@@ -23,7 +18,7 @@ class DatabaseHelper {
   static const String columnCategory = 'category';
   static const String columnIsCompleted = 'isCompleted';
   
-  DatabaseHelper._internal();
+  Database? _database;
   
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -58,7 +53,7 @@ class DatabaseHelper {
     ''');
   }
   
-  // Insert a new task
+  
   Future<int> insertTask(Task task) async {
     final db = await database;
     return await db.insert(
@@ -68,7 +63,7 @@ class DatabaseHelper {
     );
   }
   
-  // Get all tasks
+  
   Future<List<Task>> getTasks() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(tasksTable);
@@ -78,7 +73,7 @@ class DatabaseHelper {
     });
   }
   
-  // Get ongoing tasks (not completed)
+  
   Future<List<Task>> getOngoingTasks() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -92,7 +87,7 @@ class DatabaseHelper {
     });
   }
   
-  // Get completed tasks
+  
   Future<List<Task>> getCompletedTasks() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -106,7 +101,7 @@ class DatabaseHelper {
     });
   }
   
-  // Update a task
+  
   Future<int> updateTask(Task task) async {
     final db = await database;
     return await db.update(
@@ -117,7 +112,7 @@ class DatabaseHelper {
     );
   }
   
-  // Mark task as completed
+  
   Future<int> markTaskAsCompleted(int id) async {
     final db = await database;
     return await db.update(
@@ -128,7 +123,7 @@ class DatabaseHelper {
     );
   }
   
-  // Mark task as ongoing (not completed)
+  
   Future<int> markTaskAsOngoing(int id) async {
     final db = await database;
     return await db.update(
@@ -139,7 +134,7 @@ class DatabaseHelper {
     );
   }
   
-  // Delete a task
+  
   Future<int> deleteTask(int id) async {
     final db = await database;
     return await db.delete(
@@ -149,13 +144,13 @@ class DatabaseHelper {
     );
   }
   
-  // Delete all tasks
-  Future<int> deleteAllTasks() async {
-    final db = await database;
-    return await db.delete(tasksTable);
-  }
   
-  // Close the database
+  // Future<int> deleteAllTasks() async {
+  //   final db = await database;
+  //   return await db.delete(tasksTable);
+  // }
+  
+  
   Future<void> close() async {
     final db = await database;
     db.close();

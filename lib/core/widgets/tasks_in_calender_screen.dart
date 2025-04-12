@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/core/widgets/task_list_tile.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_state.dart';
 
 class TasksInCalenderScreen extends StatelessWidget {
   const TasksInCalenderScreen({
@@ -10,6 +14,8 @@ class TasksInCalenderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<TasksHomeCubit>();
+    cubit.newTaskAdded == true ? cubit.loadTasks() : null;
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 30.w,
@@ -24,18 +30,113 @@ class TasksInCalenderScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20.h),
-          SizedBox(
-            height: 500.h,
-            width: double.infinity,
-            child: ListView.separated(
-              itemBuilder: (context, index) =>
-                  TaskListTile(title: 'design 1', daysRemaining: '2'),
-              separatorBuilder: (context, index) => SizedBox(height: 5.h),
-              itemCount: 5,
-            ),
-          )
+          BlocBuilder<TasksHomeCubit, TasksHomeState>(
+            builder: (context, state) {
+              if (state is TasksLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is TasksError) {
+                return Center(child: Text('Error: ${state.message}'));
+              } else {
+                final tasks = context.read<TasksHomeCubit>().allTasks;
+
+                if (tasks.isEmpty) {
+                  return Center(
+                    child: Text('No tasks for this day',
+                        style: TextStyles.font18GreyRegular),
+                  );
+                }
+
+                return SizedBox(
+                  height: 500.h,
+                  width: double.infinity,
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      final GlobalKey menuKey = GlobalKey();
+                      final String daysInfo =
+                          _calculateDaysRemaining(task.date);
+
+                      return TaskListTile(
+                        title: task.name,
+                        daysRemaining: daysInfo,
+                        menuKey: menuKey,
+                        onMenuPressed: () {
+                          _showTaskOptions(context, task.id!, menuKey);
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                    itemCount: tasks.length,
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
+    );
+  }
+
+  String _calculateDaysRemaining(String dateString) {
+    try {
+      final taskDate = DateFormat('MMM dd, yyyy').parse(dateString);
+      final today = DateTime.now();
+      final difference = taskDate.difference(today).inDays;
+
+      if (difference < 0) {
+        return 'Overdue by ${difference.abs()} days';
+      } else if (difference == 0) {
+        return 'Due today';
+      } else if (difference == 1) {
+        return 'Due tomorrow';
+      } else {
+        return '$difference days remaining';
+      }
+    } catch (e) {
+      // If there's an error parsing the date, return a fallback message
+      return 'Date unknown';
+    }
+  }
+
+  void _showTaskOptions(BuildContext context, int taskId, GlobalKey menuKey) {
+    final cubit = context.read<TasksHomeCubit>();
+
+    // Get the render box from the key
+    final RenderBox renderBox =
+        menuKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    // Calculate position based on the actual button position
+    final position = RelativeRect.fromLTRB(
+      offset.dx,
+      offset.dy + renderBox.size.height,
+      offset.dx + renderBox.size.width,
+      offset.dy,
+    );
+
+    showMenu(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          child: ListTile(
+            leading: Icon(Icons.check_circle_outline, color: Colors.green),
+            title: Text('Complete Task'),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+          onTap: () => cubit.markTaskAsCompleted(taskId),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            leading: Icon(Icons.delete_outline, color: Colors.red),
+            title: Text('Remove Task'),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+          onTap: () => cubit.deleteTask(taskId),
+        ),
+      ],
     );
   }
 }

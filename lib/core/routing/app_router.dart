@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_task/core/routing/routes.dart';
 import 'package:todo_task/features/authentication/presentation/screens/login_screen.dart';
 import 'package:todo_task/features/authentication/presentation/screens/register_screen.dart';
 import 'package:todo_task/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
+import 'package:todo_task/features/tasks/presentation/screens/bottom_nav_bar_screen_holder.dart';
 import 'package:todo_task/features/tasks/presentation/screens/create_a_task_screen.dart';
 import 'package:todo_task/features/tasks/presentation/screens/tasks_home_screen.dart';
 import 'package:todo_task/features/tasks/presentation/screens/tasks_with_calender_screen.dart';
@@ -23,6 +26,10 @@ class AppRouter {
             builder: (_) => const TasksWithCalenderScreen());
       case Routes.addATask:
         return MaterialPageRoute(builder: (_) => const CreateATaskScreen());
+
+      case Routes.bottomNavBarScreenHolder:
+        return MaterialPageRoute(
+            builder: (_) => const BottomNavBarScreenHolder());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

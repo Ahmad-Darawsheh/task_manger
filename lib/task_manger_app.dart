@@ -26,7 +26,7 @@ class TaskMangerApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         onGenerateRoute: appRouter.onGenerateRoute,
-        initialRoute: Routes.addATask,
+        initialRoute: Routes.bottomNavBarScreenHolder,
       ),
     );
   }

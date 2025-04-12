@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_task/core/helpers/extensions.dart';
+import 'package:todo_task/core/routing/routes.dart';
 import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/calender/calendar_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/calender/calendar_state.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 
 class DateHeaderAndButton extends StatelessWidget {
   const DateHeaderAndButton({
@@ -58,7 +61,11 @@ class DateHeaderAndButton extends StatelessWidget {
               ],
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            // Instead of using navigateTo extension, use Navigator with BlocProvider.value
+            final tasksHomeCubit = context.read<TasksHomeCubit>();
+            Navigator.of(context).pushNamed(Routes.addATask);
+          },
         )
       ],
     );

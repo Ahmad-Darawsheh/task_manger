@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:todo_task/core/helpers/extensions.dart';
 import 'package:todo_task/core/images/app_images.dart';
 
 class TasksCalenderAppBar extends StatelessWidget
@@ -14,18 +13,7 @@ class TasksCalenderAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      leading: Transform.translate(
-        offset: Offset(0, 15.h),
-        child: InkWell(
-          child: SvgPicture.asset(
-            AppImages.assetsSvgsArrowBack,
-            width: 24.h,
-            height: 24.h,
-            fit: BoxFit.scaleDown,
-          ),
-          onTap: () => context.pop(),
-        ),
-      ),
+      leading: SizedBox.shrink(),
       actions: [
         Transform.translate(
           offset: Offset(0, 13.h),
