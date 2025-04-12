@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/core/widgets/day_calculation_and_menu.dart';
+import 'package:todo_task/features/authentication/presentation/logic/auth_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_state.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/carousel_dots.dart';
@@ -17,6 +18,7 @@ class TasksHomeScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<TasksHomeCubit>();
+    final authCubit = context.read<AuthCubit>();
 
     return Scaffold(
       // bottomNavigationBar: HomeBottomNavigationBar(),
@@ -27,7 +29,7 @@ class TasksHomeScreenBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hello Name',
+              'Welcome back,',
               style: TextStyles.font36DarkBlueSemiBold,
             ),
             Text(
@@ -83,7 +85,7 @@ class TasksHomeScreenBody extends StatelessWidget {
                     if (ongoingTasks.isEmpty) {
                       return Center(
                           child: Text('No ongoing tasks',
-                              style: TextStyles.font18GreyRegular));
+                              style: TextStyles.font17DarkBlueSemiBold));
                     }
 
                     return ListView.builder(

@@ -2,13 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/widgets/tasks_in_calender_screen.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_with_calender/date_header_and_button.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_with_calender/task_mini_calender.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_with_calender/tasks_calender_appbar.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/calender/calendar_cubit.dart';
 
-class TasksWithCalenderScreenBody extends StatelessWidget {
+class TasksWithCalenderScreenBody extends StatefulWidget {
   const TasksWithCalenderScreenBody({super.key});
+
+  @override
+  State<TasksWithCalenderScreenBody> createState() => _TasksWithCalenderScreenBodyState();
+}
+
+class _TasksWithCalenderScreenBodyState extends State<TasksWithCalenderScreenBody> {
+  @override
+  void initState() {
+    super.initState();
+    // Refresh tasks when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TasksHomeCubit>().loadTasks();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

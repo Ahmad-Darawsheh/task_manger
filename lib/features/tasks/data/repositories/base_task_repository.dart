@@ -1,14 +1,14 @@
 import 'package:todo_task/features/tasks/data/models/task_model.dart';
 
 abstract class BaseTaskRepository {
-  // Get all tasks
-  Future<List<Task>> getAllTasks();
+  // Get all tasks for a specific user
+  Future<List<Task>> getAllTasks(String userId);
   
-  // Get ongoing tasks
-  Future<List<Task>> getOngoingTasks();
+  // Get ongoing tasks for a specific user
+  Future<List<Task>> getOngoingTasks(String userId);
   
-  // Get completed tasks
-  Future<List<Task>> getCompletedTasks();
+  // Get completed tasks for a specific user
+  Future<List<Task>> getCompletedTasks(String userId);
   
   // Add a new task
   Future<int> addTask(Task task);
@@ -17,11 +17,11 @@ abstract class BaseTaskRepository {
   Future<int> updateTask(Task task);
   
   // Mark a task as completed
-  Future<int> markTaskAsCompleted(int taskId);
+  Future<int> markTaskAsCompleted(int taskId, String userId);
   
   // Mark a task as ongoing
-  Future<int> markTaskAsOngoing(int taskId);
+  Future<int> markTaskAsOngoing(int taskId, String userId);
   
   // Delete a task
-  Future<int> deleteTask(int taskId);
+  Future<int> deleteTask(int taskId, String userId);
 }

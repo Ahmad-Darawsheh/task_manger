@@ -7,6 +7,7 @@ class Task {
   final String description;
   final String category;
   final bool isCompleted;
+  final String userId; // Added userId field to associate tasks with users
 
   Task({
     this.id,
@@ -17,6 +18,7 @@ class Task {
     required this.description,
     required this.category,
     required this.isCompleted,
+    required this.userId,
   });
 
   // Convert Task object to a map for storing in the database
@@ -30,6 +32,7 @@ class Task {
       'description': description,
       'category': category,
       'isCompleted': isCompleted ? 1 : 0, // SQLite doesn't have boolean type
+      'userId': userId,
     };
   }
 
@@ -44,6 +47,7 @@ class Task {
       description: map['description'],
       category: map['category'],
       isCompleted: map['isCompleted'] == 1,
+      userId: map['userId'],
     );
   }
 
@@ -57,6 +61,7 @@ class Task {
     String? description,
     String? category,
     bool? isCompleted,
+    String? userId,
   }) {
     return Task(
       id: id ?? this.id,
@@ -67,6 +72,7 @@ class Task {
       description: description ?? this.description,
       category: category ?? this.category,
       isCompleted: isCompleted ?? this.isCompleted,
+      userId: userId ?? this.userId,
     );
   }
 }

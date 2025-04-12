@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_task/core/services/service_locator.dart';
+import 'package:todo_task/features/authentication/data/repositories/firebase_auth_repository.dart';
 import 'package:todo_task/features/tasks/data/models/task_model.dart';
 import 'package:todo_task/features/tasks/data/repositories/base_task_repository.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/add_tasks/add_tasks_state.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 
 class AddTasksCubit extends Cubit<AddTasksState> {
   final BaseTaskRepository taskRepository;
+  final TasksHomeCubit? tasksHomeCubit;
  
-  
   AddTasksCubit({
     BaseTaskRepository? repository,
-    
+    this.tasksHomeCubit,
   }) : taskRepository = repository ?? sl<BaseTaskRepository>(),
       super(const AddTasksInitial());
 
@@ -81,6 +84,16 @@ class AddTasksCubit extends Cubit<AddTasksState> {
     }
   }
   
+  // Get current user ID from SharedPreferences
+  Future<String> _getCurrentUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userId = prefs.getString(FirebaseAuthRepository.userIdKey) ?? '';
+    if (userId.isEmpty) {
+      emit(const AddTasksError('User not logged in'));
+    }
+    return userId;
+  }
+  
   // Validate and create new task
   Future<bool> validateAndCreateTask() async {
     // Basic validation
@@ -92,33 +105,51 @@ class AddTasksCubit extends Cubit<AddTasksState> {
       return false;
     }
     
-    // Create a task object
-    final task = Task(
-      name: taskNameController.text,
-      date: taskDateController.text,
-      startTime: taskStartTimeController.text,
-      endTime: taskEndTimeController.text,
-      description: taskDescriptionController.text.isEmpty 
-          ? 'No description' 
-          : taskDescriptionController.text,
-      category: selectedCategory,
-      isCompleted: false, // New task is ongoing by default
-    );
-    
-    // Save to database
-    final result = await taskRepository.addTask(task);
-    
-    // Clear the form after successful save
-    if (result > 0) {
-      clearForm();
+    try {
+      // Get current user ID
+      String userId = await _getCurrentUserId();
+      if (userId.isEmpty) {
+        return false;
+      }
       
-      // Reload tasks in parent cubit if provided
-     
+      // Create a task object with user ID
+      final task = Task(
+        name: taskNameController.text,
+        date: taskDateController.text,
+        startTime: taskStartTimeController.text,
+        endTime: taskEndTimeController.text,
+        description: taskDescriptionController.text.isEmpty 
+            ? 'No description' 
+            : taskDescriptionController.text,
+        category: selectedCategory,
+        isCompleted: false, // New task is ongoing by default
+        userId: userId, // Include user ID
+      );
       
-      return true;
+      // Save to database
+      final result = await taskRepository.addTask(task);
+      
+      // Clear the form after successful save
+      if (result > 0) {
+        clearForm();
+        
+        // Update TasksHomeCubit to reload tasks
+        if (tasksHomeCubit != null) {
+          tasksHomeCubit!.setNewTaskAdded(true);
+          tasksHomeCubit!.loadTasks();
+        }
+        
+        // Emit success state
+        emit(const TaskCreated());
+        
+        return true;
+      }
+      
+      return false;
+    } catch (e) {
+      emit(AddTasksError('Error creating task: $e'));
+      return false;
     }
-    
-    return false;
   }
   
   // Clear the form

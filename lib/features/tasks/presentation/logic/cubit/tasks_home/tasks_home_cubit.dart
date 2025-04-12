@@ -2,23 +2,41 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_task/core/services/service_locator.dart';
+import 'package:todo_task/features/authentication/data/repositories/firebase_auth_repository.dart';
 import 'package:todo_task/features/tasks/data/models/task_minor_details_model.dart';
 import 'package:todo_task/features/tasks/data/models/task_type_model.dart';
 import 'package:todo_task/features/tasks/data/models/task_model.dart';
 import 'package:todo_task/features/tasks/data/repositories/base_task_repository.dart';
+import 'package:todo_task/features/tasks/presentation/screens/settings_screen.dart';
 import 'package:todo_task/features/tasks/presentation/screens/tasks_home_screen.dart';
 import 'package:todo_task/features/tasks/presentation/screens/tasks_with_calender_screen.dart';
 import 'tasks_home_state.dart';
 
 class TasksHomeCubit extends Cubit<TasksHomeState> {
   final BaseTaskRepository taskRepository;
+  String _currentUserId = '';
 
   TasksHomeCubit({BaseTaskRepository? repository})
       : taskRepository = repository ?? sl<BaseTaskRepository>(),
         super(const CarouselInitial()) {
-    // Load tasks when the cubit is created
-    loadTasks();
+    // Load the current user ID and then load tasks
+    _loadCurrentUserId().then((_) => loadTasks());
+  }
+
+  // Load current user ID from SharedPreferences
+  Future<void> _loadCurrentUserId() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _currentUserId = prefs.getString(FirebaseAuthRepository.userIdKey) ?? '';
+      
+      if (_currentUserId.isEmpty) {
+        emit(TasksError(message: 'No user is logged in'));
+      }
+    } catch (e) {
+      emit(TasksError(message: 'Error loading user ID: $e'));
+    }
   }
 
   List<TaskTypeModel> taskTypes = [
@@ -36,11 +54,7 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
   List<Widget> routes = [
     TasksHomeScreen(),
     TasksWithCalenderScreen(),
-    Scaffold(
-      appBar: AppBar(title: const Text('Unknown Route')),
-      body: Center(child: Text('No route defined')),
-    ),
-    // Routes.settings,
+    SettingsScreen(),
   ];
 
   List<BottomNavigationBarItem> bottomNavBarItems = [
@@ -87,26 +101,40 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
 
   void bottomNavBarChangeIndex(int index) {
     navBarIndex = index;
+    
+    // Always refresh tasks when changing tabs
+    loadTasks();
+    
+    // Then emit the appropriate state based on which tab we navigated to
     if (navBarIndex == 0) {
-      newTaskAdded == true ? loadTasks() : null;
-      log('should\'ve loaded');
-      newTaskAdded == true ? newTaskAdded = false : null;
+      newTaskAdded = false; // Reset flag
       emit(BottomNavBarIndexChangedToTaskHome());
     } else if (navBarIndex == 1) {
-      newTaskAdded == true ? loadTasks() : null;
+      newTaskAdded = false; // Reset flag
       emit(BottomNavBarIndexChangedToCalender());
+    } else if (navBarIndex == 2) {
+      newTaskAdded = false; // Reset flag
+      emit(BottomNavBarIndexChangedToSettings());
     }
   }
 
-  // Load all tasks from the database
+  // Load all tasks from the database for the current user
   Future<void> loadTasks() async {
     emit(TasksLoading());
 
     try {
-      // Get tasks from repository
-      allTasks = await taskRepository.getAllTasks();
-      ongoingTasks = await taskRepository.getOngoingTasks();
-      completedTasks = await taskRepository.getCompletedTasks();
+      if (_currentUserId.isEmpty) {
+        await _loadCurrentUserId();
+        if (_currentUserId.isEmpty) {
+          emit(TasksError(message: 'Unable to load user ID'));
+          return;
+        }
+      }
+      
+      // Get tasks from repository with user ID
+      allTasks = await taskRepository.getAllTasks(_currentUserId);
+      ongoingTasks = await taskRepository.getOngoingTasks(_currentUserId);
+      completedTasks = await taskRepository.getCompletedTasks(_currentUserId);
 
       emit(TasksLoaded(
         allTasks: allTasks,
@@ -121,7 +149,10 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
   // Mark a task as completed
   Future<void> markTaskAsCompleted(int taskId) async {
     try {
-      await taskRepository.markTaskAsCompleted(taskId);
+      if (_currentUserId.isEmpty) {
+        await _loadCurrentUserId();
+      }
+      await taskRepository.markTaskAsCompleted(taskId, _currentUserId);
       await loadTasks(); // Reload tasks after update
     } catch (e) {
       emit(TasksError(message: e.toString()));
@@ -131,7 +162,10 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
   // Mark a task as ongoing
   Future<void> markTaskAsOngoing(int taskId) async {
     try {
-      await taskRepository.markTaskAsOngoing(taskId);
+      if (_currentUserId.isEmpty) {
+        await _loadCurrentUserId();
+      }
+      await taskRepository.markTaskAsOngoing(taskId, _currentUserId);
       await loadTasks(); // Reload tasks after update
     } catch (e) {
       emit(TasksError(message: e.toString()));
@@ -141,10 +175,28 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
   // Delete a task
   Future<void> deleteTask(int taskId) async {
     try {
-      await taskRepository.deleteTask(taskId);
+      if (_currentUserId.isEmpty) {
+        await _loadCurrentUserId();
+      }
+      await taskRepository.deleteTask(taskId, _currentUserId);
       await loadTasks(); // Reload tasks after deletion
     } catch (e) {
       emit(TasksError(message: e.toString()));
+    }
+  }
+  
+  // Get current user ID - useful for other components that need it
+  String getCurrentUserId() {
+    return _currentUserId;
+  }
+  
+  // Set newTaskAdded flag and emit appropriate state
+  void setNewTaskAdded(bool value) {
+    newTaskAdded = value;
+    if (value && navBarIndex == 0) {
+      emit(BottomNavBarIndexChangedToTaskHome());
+    } else if (value && navBarIndex == 1) {
+      emit(BottomNavBarIndexChangedToCalender());
     }
   }
 }

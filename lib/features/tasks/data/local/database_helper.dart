@@ -17,6 +17,7 @@ class DatabaseHelper {
   static const String columnDescription = 'description';
   static const String columnCategory = 'category';
   static const String columnIsCompleted = 'isCompleted';
+  static const String columnUserId = 'userId'; // Added userId column
   
   Database? _database;
   
@@ -33,8 +34,9 @@ class DatabaseHelper {
     
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Updated version number to trigger migration
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
   
@@ -48,11 +50,19 @@ class DatabaseHelper {
         $columnEndTime TEXT NOT NULL,
         $columnDescription TEXT NOT NULL,
         $columnCategory TEXT NOT NULL,
-        $columnIsCompleted INTEGER NOT NULL
+        $columnIsCompleted INTEGER NOT NULL,
+        $columnUserId TEXT NOT NULL
       )
     ''');
   }
   
+  // Handle database migrations
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add userId column to existing table
+      await db.execute('ALTER TABLE $tasksTable ADD COLUMN $columnUserId TEXT DEFAULT ""');
+    }
+  }
   
   Future<int> insertTask(Task task) async {
     final db = await database;
@@ -63,23 +73,12 @@ class DatabaseHelper {
     );
   }
   
-  
-  Future<List<Task>> getTasks() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(tasksTable);
-    
-    return List.generate(maps.length, (index) {
-      return Task.fromMap(maps[index]);
-    });
-  }
-  
-  
-  Future<List<Task>> getOngoingTasks() async {
+  Future<List<Task>> getTasks(String userId) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       tasksTable,
-      where: '$columnIsCompleted = ?',
-      whereArgs: [0],
+      where: '$columnUserId = ?',
+      whereArgs: [userId],
     );
     
     return List.generate(maps.length, (index) {
@@ -87,13 +86,12 @@ class DatabaseHelper {
     });
   }
   
-  
-  Future<List<Task>> getCompletedTasks() async {
+  Future<List<Task>> getOngoingTasks(String userId) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       tasksTable,
-      where: '$columnIsCompleted = ?',
-      whereArgs: [1],
+      where: '$columnIsCompleted = ? AND $columnUserId = ?',
+      whereArgs: [0, userId],
     );
     
     return List.generate(maps.length, (index) {
@@ -101,55 +99,57 @@ class DatabaseHelper {
     });
   }
   
+  Future<List<Task>> getCompletedTasks(String userId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tasksTable,
+      where: '$columnIsCompleted = ? AND $columnUserId = ?',
+      whereArgs: [1, userId],
+    );
+    
+    return List.generate(maps.length, (index) {
+      return Task.fromMap(maps[index]);
+    });
+  }
   
   Future<int> updateTask(Task task) async {
     final db = await database;
     return await db.update(
       tasksTable,
       task.toMap(),
-      where: '$columnId = ?',
-      whereArgs: [task.id],
+      where: '$columnId = ? AND $columnUserId = ?',
+      whereArgs: [task.id, task.userId],
     );
   }
   
-  
-  Future<int> markTaskAsCompleted(int id) async {
+  Future<int> markTaskAsCompleted(int id, String userId) async {
     final db = await database;
     return await db.update(
       tasksTable,
       {columnIsCompleted: 1},
-      where: '$columnId = ?',
-      whereArgs: [id],
+      where: '$columnId = ? AND $columnUserId = ?',
+      whereArgs: [id, userId],
     );
   }
   
-  
-  Future<int> markTaskAsOngoing(int id) async {
+  Future<int> markTaskAsOngoing(int id, String userId) async {
     final db = await database;
     return await db.update(
       tasksTable,
       {columnIsCompleted: 0},
-      where: '$columnId = ?',
-      whereArgs: [id],
+      where: '$columnId = ? AND $columnUserId = ?',
+      whereArgs: [id, userId],
     );
   }
   
-  
-  Future<int> deleteTask(int id) async {
+  Future<int> deleteTask(int id, String userId) async {
     final db = await database;
     return await db.delete(
       tasksTable,
-      where: '$columnId = ?',
-      whereArgs: [id],
+      where: '$columnId = ? AND $columnUserId = ?',
+      whereArgs: [id, userId],
     );
   }
-  
-  
-  // Future<int> deleteAllTasks() async {
-  //   final db = await database;
-  //   return await db.delete(tasksTable);
-  // }
-  
   
   Future<void> close() async {
     final db = await database;

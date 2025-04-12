@@ -15,7 +15,7 @@ class TasksInCalenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<TasksHomeCubit>();
-    cubit.newTaskAdded == true ? cubit.loadTasks() : null;
+    
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 30.w,
@@ -37,12 +37,12 @@ class TasksInCalenderScreen extends StatelessWidget {
               } else if (state is TasksError) {
                 return Center(child: Text('Error: ${state.message}'));
               } else {
-                final tasks = context.read<TasksHomeCubit>().allTasks;
+                final tasks = cubit.ongoingTasks;
 
                 if (tasks.isEmpty) {
                   return Center(
                     child: Text('No tasks for this day',
-                        style: TextStyles.font18GreyRegular),
+                        style: TextStyles.font17DarkBlueSemiBold),
                   );
                 }
 
@@ -125,7 +125,12 @@ class TasksInCalenderScreen extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             dense: true,
           ),
-          onTap: () => cubit.markTaskAsCompleted(taskId),
+          onTap: () {
+            // Mark as completed and force refresh
+            Future.delayed(Duration.zero, () {
+              cubit.markTaskAsCompleted(taskId);
+            });
+          },
         ),
         PopupMenuItem(
           child: ListTile(
@@ -134,7 +139,12 @@ class TasksInCalenderScreen extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             dense: true,
           ),
-          onTap: () => cubit.deleteTask(taskId),
+          onTap: () {
+            // Delete and force refresh
+            Future.delayed(Duration.zero, () {
+              cubit.deleteTask(taskId);
+            });
+          },
         ),
       ],
     );

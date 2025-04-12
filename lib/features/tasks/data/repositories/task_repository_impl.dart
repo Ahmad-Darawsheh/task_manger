@@ -14,18 +14,18 @@ class TaskRepositoryImpl implements BaseTaskRepository {
   }
 
   @override
-  Future<List<Task>> getAllTasks() async {
-    return await _databaseHelper.getTasks();
+  Future<List<Task>> getAllTasks(String userId) async {
+    return await _databaseHelper.getTasks(userId);
   }
 
   @override
-  Future<List<Task>> getOngoingTasks() async {
-    return await _databaseHelper.getOngoingTasks();
+  Future<List<Task>> getOngoingTasks(String userId) async {
+    return await _databaseHelper.getOngoingTasks(userId);
   }
 
   @override
-  Future<List<Task>> getCompletedTasks() async {
-    return await _databaseHelper.getCompletedTasks();
+  Future<List<Task>> getCompletedTasks(String userId) async {
+    return await _databaseHelper.getCompletedTasks(userId);
   }
 
   @override
@@ -34,17 +34,17 @@ class TaskRepositoryImpl implements BaseTaskRepository {
   }
 
   @override
-  Future<int> markTaskAsCompleted(int taskId) async {
-    return await _databaseHelper.markTaskAsCompleted(taskId);
+  Future<int> markTaskAsCompleted(int taskId, String userId) async {
+    return await _databaseHelper.markTaskAsCompleted(taskId, userId);
   }
 
   @override
-  Future<int> markTaskAsOngoing(int taskId) async {
-    return await _databaseHelper.markTaskAsOngoing(taskId);
+  Future<int> markTaskAsOngoing(int taskId, String userId) async {
+    return await _databaseHelper.markTaskAsOngoing(taskId, userId);
   }
 
   @override
-  Future<int> deleteTask(int taskId) async {
-    return await _databaseHelper.deleteTask(taskId);
+  Future<int> deleteTask(int taskId, String userId) async {
+    return await _databaseHelper.deleteTask(taskId, userId);
   }
 }

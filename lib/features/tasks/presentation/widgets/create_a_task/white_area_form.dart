@@ -95,10 +95,7 @@ class WhiteAreaForm extends StatelessWidget {
 
                       // Show feedback message
                       if (success) {
-                        // Set flag in TasksHomeCubit
-                        final tasksHomeCubit = context.read<TasksHomeCubit>();
-                        tasksHomeCubit.newTaskAdded = true;
-
+                        // The AddTasksCubit will handle notifying the TasksHomeCubit
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Task created successfully!"),

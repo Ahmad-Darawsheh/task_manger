@@ -13,7 +13,10 @@ class CreateATaskScreen extends StatelessWidget {
     final tasksHomeCubit = context.read<TasksHomeCubit>();
     
     return BlocProvider(
-      create: (context) => AddTasksCubit(repository: tasksHomeCubit.taskRepository),
+      create: (context) => AddTasksCubit(
+        repository: tasksHomeCubit.taskRepository,
+        tasksHomeCubit: tasksHomeCubit, // Pass the TasksHomeCubit reference
+      ),
       child: CreateATaskScreenBody(),
     );
   }

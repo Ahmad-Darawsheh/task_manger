@@ -72,3 +72,10 @@ class BottomNavBarIndexChangedToTaskHome extends TasksHomeState {
   @override
   List<Object?> get props => [];
 }
+
+class BottomNavBarIndexChangedToSettings extends TasksHomeState {
+  const BottomNavBarIndexChangedToSettings();
+
+  @override
+  List<Object?> get props => [];
+}
