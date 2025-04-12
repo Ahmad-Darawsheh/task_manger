@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,14 +11,13 @@ import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets
 import 'package:todo_task/core/widgets/task_list_tile.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/task_type_widget.dart';
 
-
 class TasksHomeScreenBody extends StatelessWidget {
   const TasksHomeScreenBody({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<TasksHomeCubit>();
-    
+
     return Scaffold(
       // bottomNavigationBar: HomeBottomNavigationBar(),
       appBar: MainTasksAppBar(),

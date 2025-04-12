@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/helpers/extensions.dart';
 import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/core/widgets/design_circle_bottom_left.dart';
 import 'package:todo_task/core/widgets/design_circle_top_right.dart';
-import 'package:todo_task/features/tasks/presentation/logic/cubit/add_tasks/add_tasks_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/create_a_task/purple_area_fields.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/create_a_task/white_area_form.dart';
 
