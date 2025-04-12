@@ -13,12 +13,13 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
           // Navigate to home screen when authenticated
-          Navigator.pushReplacementNamed(context, Routes.tasksHome);
+          Navigator.pushReplacementNamed(
+              context, Routes.bottomNavBarScreenHolder);
         } else if (state is AuthError) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
@@ -31,10 +32,10 @@ class LoginForm extends StatelessWidget {
       },
       builder: (context, state) {
         // Determine password visibility from state
-        final isPasswordVisible = state is PasswordVisibilityChanged 
+        final isPasswordVisible = state is PasswordVisibilityChanged
             ? state.isLoginPasswordVisible
             : authCubit.isLoginPasswordVisible;
-            
+
         return Form(
           key: authCubit.loginFormKey,
           child: Column(
@@ -59,14 +60,15 @@ class LoginForm extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
                   }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
                     return 'Please enter a valid email';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 20.h),
-              
+
               // Password Field
               Text(
                 'Password',
@@ -83,7 +85,9 @@ class LoginForm extends StatelessWidget {
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                      isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
                     onPressed: () => authCubit.toggleLoginPasswordVisibility(),
                   ),
@@ -99,7 +103,7 @@ class LoginForm extends StatelessWidget {
                 },
               ),
               SizedBox(height: 30.h),
-              
+
               // Login Button
               Center(
                 child: Container(

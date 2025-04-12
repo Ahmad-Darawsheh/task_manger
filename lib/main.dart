@@ -14,9 +14,7 @@ void main() async {
 
   ServicesLocator().setupLocator();
 
-  ServicesLocator().setupLocator();
   Bloc.observer = AppBlocObserver();
-
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Initialize Firebase

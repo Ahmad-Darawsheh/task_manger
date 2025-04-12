@@ -17,7 +17,7 @@ class LoginButton extends StatelessWidget {
       listener: (context, state) {
         if (state is Authenticated) {
           // Navigate to home screen when authenticated
-          Navigator.pushReplacementNamed(context, Routes.tasksHome);
+          Navigator.pushReplacementNamed(context, Routes.bottomNavBarScreenHolder);
         } else if (state is AuthError) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
