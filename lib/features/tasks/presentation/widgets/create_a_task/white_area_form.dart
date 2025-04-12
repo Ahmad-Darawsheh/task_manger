@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:todo_task/core/helpers/extensions.dart';
 import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/add_tasks/add_tasks_cubit.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/create_a_task/category_selection.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/create_a_task/description_field.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/create_a_task/time_field.dart';
@@ -14,7 +16,7 @@ class WhiteAreaForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AddTasksCubit>();
-    
+
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -31,7 +33,7 @@ class WhiteAreaForm extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 10.h),
-              
+
               // Time selection row
               Row(
                 children: [
@@ -42,7 +44,6 @@ class WhiteAreaForm extends StatelessWidget {
                       onTap: () => cubit.selectTime(context, true),
                     ),
                   ),
-                  
                   SizedBox(width: 20.w),
                   Expanded(
                     child: TimeField(
@@ -54,23 +55,23 @@ class WhiteAreaForm extends StatelessWidget {
                 ],
               ),
               Container(
-                    width: 400.w,
-                    height: 1.h,
-                    color: Colors.grey[500],
-                  ),
-              
+                width: 400.w,
+                height: 1.h,
+                color: Colors.grey[500],
+              ),
+
               SizedBox(height: 30.h),
-              
+
               // Description field
               DescriptionField(controller: cubit.taskDescriptionController),
-              
+
               SizedBox(height: 30.h),
-              
+
               // Category selection
               CategorySelection(),
-              
+
               SizedBox(height: 40.h),
-              
+
               // Create Task Button
               Center(
                 child: Container(
@@ -91,20 +92,26 @@ class WhiteAreaForm extends StatelessWidget {
                     onPressed: () async {
                       // Save task to the database
                       final success = await cubit.validateAndCreateTask();
-                      
+
                       // Show feedback message
                       if (success) {
+                        // Set flag in TasksHomeCubit
+                        final tasksHomeCubit = context.read<TasksHomeCubit>();
+                        tasksHomeCubit.newTaskAdded = true;
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Task created successfully!"),
                             backgroundColor: Colors.green,
                           ),
                         );
-                        Navigator.of(context).pop(); // Go back to tasks screen
+
+                        context.pop(); // Go back to tasks screen
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("Please complete all required fields"),
+                            content:
+                                Text("Please complete all required fields"),
                             backgroundColor: Colors.red,
                           ),
                         );

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_task/core/services/service_locator.dart';
 import 'package:todo_task/features/tasks/data/models/task_model.dart';
-import 'package:todo_task/features/tasks/data/repositories/task_repository_impl.dart';
 import 'package:todo_task/features/tasks/data/repositories/base_task_repository.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/add_tasks/add_tasks_state.dart';
 
 class AddTasksCubit extends Cubit<AddTasksState> {
   final BaseTaskRepository taskRepository;
+ 
   
-  AddTasksCubit({BaseTaskRepository? repository})
-      : taskRepository = repository ?? TaskRepositoryImpl(),
-        super(const AddTasksInitial());
+  AddTasksCubit({
+    BaseTaskRepository? repository,
+    
+  }) : taskRepository = repository ?? sl<BaseTaskRepository>(),
+      super(const AddTasksInitial());
 
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
@@ -28,12 +31,12 @@ class AddTasksCubit extends Cubit<AddTasksState> {
   
   // Task categories
   final List<String> categories = [
-    'Category 1',
-    'Category 2',
-    'Category 3',
-    'Category 4',
-    'Category 5',
-    'Category 6'
+    'Design',
+    'Meeting',
+    'Coding',
+    'BDE',
+    'Testing',
+    'Quick Call'
   ];
   
   // Select category
@@ -108,6 +111,10 @@ class AddTasksCubit extends Cubit<AddTasksState> {
     // Clear the form after successful save
     if (result > 0) {
       clearForm();
+      
+      // Reload tasks in parent cubit if provided
+     
+      
       return true;
     }
     

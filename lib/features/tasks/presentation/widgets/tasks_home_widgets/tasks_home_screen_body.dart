@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/theming/styles.dart';
+import 'package:todo_task/core/widgets/day_calculation_and_menu.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_state.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/carousel_dots.dart';
@@ -16,7 +17,9 @@ class TasksHomeScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<TasksHomeCubit>();
+
     return Scaffold(
+      // bottomNavigationBar: HomeBottomNavigationBar(),
       appBar: MainTasksAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
@@ -66,13 +69,48 @@ class TasksHomeScreenBody extends StatelessWidget {
               style: TextStyles.font24DarkBlueSemiBold.copyWith(fontSize: 26),
             ),
             SizedBox(height: 20.h),
-            TaskListTile(
-              title: 'Project 1',
-              daysRemaining: '3',
-            ),
-            TaskListTile(
-              title: 'Project 1',
-              daysRemaining: '3',
+            Expanded(
+              child: BlocBuilder<TasksHomeCubit, TasksHomeState>(
+                builder: (context, state) {
+                  if (state is TasksLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is TasksError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    final ongoingTasks =
+                        context.read<TasksHomeCubit>().ongoingTasks;
+
+                    if (ongoingTasks.isEmpty) {
+                      return Center(
+                          child: Text('No ongoing tasks',
+                              style: TextStyles.font18GreyRegular));
+                    }
+
+                    return ListView.builder(
+                      itemCount: ongoingTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = ongoingTasks[index];
+                        // Create a GlobalKey for each task item
+                        final GlobalKey menuKey = GlobalKey();
+
+                        // Calculate days remaining
+                        final String daysInfo =
+                            calculateDaysRemaining(task.date);
+
+                        return TaskListTile(
+                          title: task.name,
+                          daysRemaining: daysInfo,
+                          menuKey: menuKey, // Pass the key to the TaskListTile
+                          onMenuPressed: () {
+                            // Use the key to access the button's context and position
+                            showTaskOptions(context, task.id!, menuKey);
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),

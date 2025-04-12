@@ -22,6 +22,7 @@ class TasksWithCalenderScreenBody extends StatelessWidget {
         return cubit;
       },
       child: Scaffold(
+        // bottomNavigationBar: HomeBottomNavigationBar(),
         appBar: TasksCalenderAppBar(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

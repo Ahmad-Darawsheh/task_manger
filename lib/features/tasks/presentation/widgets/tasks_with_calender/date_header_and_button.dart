@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_task/core/helpers/extensions.dart';
+import 'package:todo_task/core/routing/routes.dart';
 import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/calender/calendar_cubit.dart';
@@ -18,17 +20,16 @@ class DateHeaderAndButton extends StatelessWidget {
       children: [
         BlocBuilder<CalendarCubit, CalendarState>(builder: (context, state) {
           DateTime today;
-    
+
           if (state is CalendarInitial) {
             today = state.today;
           } else {
             today = DateTime.now();
           }
-    
+
           final formattedDate = DateFormat('MMM, yyyy').format(today);
-    
-          return Text(formattedDate,
-              style: TextStyles.font36DarkBlueSemiBold);
+
+          return Text(formattedDate, style: TextStyles.font36DarkBlueSemiBold);
         }),
         Spacer(),
         InkWell(
@@ -58,7 +59,9 @@ class DateHeaderAndButton extends StatelessWidget {
               ],
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            context.navigateTo(Routes.addATask);
+          },
         )
       ],
     );

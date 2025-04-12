@@ -13,7 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
 
   ServicesLocator().setupLocator();
+
+  ServicesLocator().setupLocator();
   Bloc.observer = AppBlocObserver();
+
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Initialize Firebase

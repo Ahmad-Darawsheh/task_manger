@@ -9,12 +9,14 @@ class TaskListTile extends StatelessWidget {
   final String title;
   final String daysRemaining;
   final VoidCallback? onMenuPressed;
+  final GlobalKey? menuKey; // Add this parameter
 
   const TaskListTile({
     super.key,
     required this.title,
     required this.daysRemaining,
     this.onMenuPressed,
+    this.menuKey, // Add this to constructor
   });
 
   @override
@@ -65,12 +67,15 @@ class TaskListTile extends StatelessWidget {
         ),
         subtitle: Padding(
           padding: EdgeInsets.only(top: 4.h),
-          child: Text("$daysRemaining days ago",
-              style: TextStyles.font14WhiteRegular.copyWith(
-                  color: Color(0xffBFC8E8)) // Assuming this style exists
-              ),
+          child: Text(
+            daysRemaining,
+            style: TextStyles.font14WhiteRegular.copyWith(
+              color: Color(0xffBFC8E8)
+            )
+          ),
         ),
         trailing: InkWell(
+          key: menuKey, // Use the key here
           onTap: onMenuPressed,
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(

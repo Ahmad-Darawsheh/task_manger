@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:todo_task/core/images/app_images.dart';
@@ -6,15 +7,18 @@ import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/core/widgets/design_circle_bottom_left.dart';
 import 'package:todo_task/core/widgets/design_circle_top_right.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/box_minor_details_text.dart';
 
 class BoxWithTaskMinorDetails extends StatelessWidget {
   const BoxWithTaskMinorDetails({
-    super.key,
+    super.key, required this.index,
   });
+  final int index;
 
   @override
   Widget build(BuildContext context) {
+    final cubit=context.read <TasksHomeCubit>();
     return Stack(
       children: [
         Container(
@@ -48,14 +52,14 @@ class BoxWithTaskMinorDetails extends StatelessWidget {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Project 1',
+                    'Project ${cubit.allTasks[index].id}',
                     style: TextStyles.font17DarkBlueSemiBold.copyWith(
                       color: Colors.white,
                     ),
                   ),
                 ],
               ),
-              BoxMinorDetailsText(),
+              BoxMinorDetailsText(index: index,),
             ],
           ),
         ),
