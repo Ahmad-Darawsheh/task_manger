@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/tasks_home_screen_body.dart';
 
 class TasksHomeScreen extends StatelessWidget {
@@ -6,6 +8,9 @@ class TasksHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TasksHomeScreenBody();
+    return BlocProvider(
+      create: (context) => TasksHomeCubit(),
+      child: TasksHomeScreenBody(),
+    );
   }
 }
