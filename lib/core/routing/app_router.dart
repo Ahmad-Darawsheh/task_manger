@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_task/core/routing/routes.dart';
 import 'package:todo_task/features/authentication/presentation/screens/login_screen.dart';
 import 'package:todo_task/features/authentication/presentation/screens/register_screen.dart';
-import 'package:todo_task/features/onboarding/presentation/onboarding_screen.dart';
+
 import 'package:todo_task/features/tasks/presentation/screens/bottom_nav_bar_screen_holder.dart';
 import 'package:todo_task/features/tasks/presentation/screens/create_a_task_screen.dart';
 import 'package:todo_task/features/tasks/presentation/screens/tasks_home_screen.dart';
@@ -11,8 +11,6 @@ import 'package:todo_task/features/tasks/presentation/screens/tasks_with_calende
 class AppRouter {
   Route onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.onBoarding:
-        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
       case Routes.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case Routes.register:

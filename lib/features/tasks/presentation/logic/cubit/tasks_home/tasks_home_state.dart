@@ -27,6 +27,16 @@ class CarouselPageChanged extends TasksHomeState {
   List<Object?> get props => [currentIndex];
 }
 
+// State when task type selection changes
+class TasksTypeChanged extends TasksHomeState {
+  final int currentIndex;
+
+  const TasksTypeChanged({required this.currentIndex});
+
+  @override
+  List<Object?> get props => [currentIndex];
+}
+
 // Loading tasks state
 class TasksLoading extends TasksHomeState {}
 

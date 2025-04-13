@@ -21,24 +21,21 @@ class DescriptionField extends StatelessWidget {
           style: TextStyles.font14DarkBlueBold,
         ),
         SizedBox(height: 10.h),
+        TextField(
+          controller: controller,
+          style: TextStyles.font14DarkBlueRegular,
+          cursorColor: ColorsManger.grey,
+          maxLines: 5,
+          decoration: InputDecoration(
+            contentPadding:
+                EdgeInsets.only(top: 15.h, bottom: 15.h, right: 40.w),
+            border: InputBorder.none,
+          ),
+        ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          decoration: BoxDecoration(
-            color: ColorsManger.tasksColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: TextField(
-            controller: controller,
-            style: TextStyles.font14DarkBlueRegular,
-            cursorColor: ColorsManger.grey,
-            maxLines: 5,
-            decoration: InputDecoration(
-              hintText: "Add a detailed description...",
-              hintStyle: TextStyles.font13GreyRegular,
-              contentPadding: EdgeInsets.symmetric(vertical: 15.h),
-              border: InputBorder.none,
-            ),
-          ),
+          width: 400.w,
+          height: 1.h,
+          color: Colors.grey[500],
         ),
       ],
     );

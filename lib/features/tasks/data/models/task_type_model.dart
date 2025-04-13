@@ -1,6 +1,6 @@
 class TaskTypeModel {
   final String task;
-  final bool? isSelected;
+  bool? isSelected;
 
   TaskTypeModel({required this.task, this.isSelected = false});
 }

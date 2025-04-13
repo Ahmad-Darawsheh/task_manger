@@ -14,25 +14,36 @@ class CarouselDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the number of tasks and limit to 3 dots, or 1 dot if less than 3 tasks
-    final int dotsCount = context.read<TasksHomeCubit>().allTasks.length >= 3
-        ? 3
-        : context.read<TasksHomeCubit>().allTasks.length;
+    final cubit = context.read<TasksHomeCubit>();
+    
+    // Get the appropriate list based on the current task type
+    List taskList;
+    if (currentIndex == 0) {
+      taskList = cubit.allTasks;
+    } else if (currentIndex == 1) {
+      taskList = cubit.ongoingTasks;
+    } else {
+      taskList = cubit.completedTasks;
+    }
+    
+    // Get the actual number of tasks for the current task type without limiting
+    final int dotsCount = taskList.length;
+    final int activeIndex = cubit.carouselIndex < dotsCount ? cubit.carouselIndex : 0;
 
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(dotsCount, (index) {
           return Container(
-            width: currentIndex == index ? 24.0.w : 12.0.w,
+            width: activeIndex == index ? 24.0.w : 12.0.w,
             height: 12.0.h,
             margin: EdgeInsets.symmetric(horizontal: 4.0.w),
             decoration: BoxDecoration(
               shape:
-                  currentIndex == index ? BoxShape.rectangle : BoxShape.circle,
+                  activeIndex == index ? BoxShape.rectangle : BoxShape.circle,
               borderRadius:
-                  currentIndex == index ? BorderRadius.circular(6.r) : null,
-              color: currentIndex == index
+                  activeIndex == index ? BorderRadius.circular(6.r) : null,
+              color: activeIndex == index
                   ? ColorsManger.gradientBlue
                   : Colors.grey.withValues(alpha: 0.5),
             ),

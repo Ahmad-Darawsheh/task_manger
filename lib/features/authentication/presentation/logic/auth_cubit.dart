@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_task/features/authentication/data/repositories/firebase_auth_repository.dart';
 import 'package:todo_task/features/authentication/presentation/logic/auth_state.dart';
 
@@ -20,6 +21,10 @@ class AuthCubit extends Cubit<AuthState> {
   GlobalKey<FormState>? _loginFormKey;
   GlobalKey<FormState>? _registerFormKey;
   
+  // Remember me functionality
+  bool _rememberMe = false;
+  bool get rememberMe => _rememberMe;
+  
   // Getters for form keys that create them only when needed
   GlobalKey<FormState> get loginFormKey => _loginFormKey ??= GlobalKey<FormState>(debugLabel: 'loginFormKey');
   GlobalKey<FormState> get registerFormKey => _registerFormKey ??= GlobalKey<FormState>(debugLabel: 'registerFormKey');
@@ -36,7 +41,26 @@ class AuthCubit extends Cubit<AuthState> {
   
   AuthCubit({required this.authRepository}) : super(AuthInitial()) {
     // Check if user is already logged in when cubit is created
+    _loadRememberMePreference();
     checkAuthStatus();
+  }
+  
+  void setRememberMe(bool value) {
+    _rememberMe = value;
+    _saveRememberMePreference();
+    // Don't emit a state change that affects the entire UI
+    // This prevents the form rebuild issue when toggling remember me
+    // after navigating between screens
+  }
+  
+  Future<void> _loadRememberMePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    _rememberMe = prefs.getBool('rememberMe') ?? false;
+  }
+  
+  Future<void> _saveRememberMePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', _rememberMe);
   }
   
   // Toggle password visibility for login screen
@@ -158,8 +182,20 @@ class AuthCubit extends Cubit<AuthState> {
       if (success) {
         // Update user's name
         await updateUserName(registerNameController.text.trim());
+        
+        // Get user data after registration
+        final userData = await authRepository.getCurrentUser();
+        
+        // Clear form
         clearRegisterForm();
-        emit(RegisterSuccess());
+        
+        // Emit authenticated state instead of just registration success
+        // This will allow us to navigate directly to the home screen
+        emit(Authenticated(
+          userId: userData['userId'],
+          email: userData['email'],
+          name: userData['name'],
+        ));
       } else {
         emit(const RegisterError('Registration failed. Please try again.'));
       }

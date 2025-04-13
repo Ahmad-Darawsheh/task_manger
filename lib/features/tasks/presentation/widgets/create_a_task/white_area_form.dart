@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/helpers/extensions.dart';
+import 'package:todo_task/core/routing/routes.dart';
 import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/add_tasks/add_tasks_cubit.dart';
@@ -103,7 +104,8 @@ class WhiteAreaForm extends StatelessWidget {
                           ),
                         );
 
-                        context.pop(); // Go back to tasks screen
+                        context.navigateAndReplace(Routes
+                            .bottomNavBarScreenHolder); // Go back to tasks screen
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

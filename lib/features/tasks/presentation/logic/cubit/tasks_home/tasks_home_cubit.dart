@@ -18,6 +18,10 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
   final BaseTaskRepository taskRepository;
   String _currentUserId = '';
 
+  // Add the missing carouselIndex property
+  int _carouselIndex = 0;
+  int get carouselIndex => _carouselIndex;
+
   TasksHomeCubit({BaseTaskRepository? repository})
       : taskRepository = repository ?? sl<BaseTaskRepository>(),
         super(const CarouselInitial()) {
@@ -94,8 +98,25 @@ class TasksHomeCubit extends Cubit<TasksHomeState> {
 
   int navBarIndex = 0;
   bool newTaskAdded = false;
+
+  // Method to select a task type and update the UI accordingly
+  void selectTaskType(int index) {
+    // Update selected state for all task types
+    for (int i = 0; i < taskTypes.length; i++) {
+      taskTypes[i].isSelected = (i == index);
+    }
+    
+    // Update carousel index when task type changes
+    _carouselIndex = 0;
+    
+    // Emit state to update the UI
+    emit(TasksLoading());
+    emit(TasksTypeChanged(currentIndex: index));
+    emit(CarouselPageChanged(currentIndex: index));
+  }
   
   void changeIndex(int index) {
+    _carouselIndex = index; // Update the carouselIndex property
     emit(CarouselPageChanged(currentIndex: index));
   }
 

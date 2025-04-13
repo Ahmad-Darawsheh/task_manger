@@ -38,19 +38,41 @@ class TasksHomeScreenBody extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
             SizedBox(height: 40.h),
-            Row(
-              children: cubit.taskTypes
-                  .map((e) => TaskTypeWidget(
-                        model: e,
-                      ))
-                  .toList(),
+            // Task type selector buttons with BlocBuilder to react to state changes
+            BlocBuilder<TasksHomeCubit, TasksHomeState>(
+              buildWhen: (previous, current) => 
+                current is TasksTypeChanged || 
+                current is CarouselPageChanged || 
+                current is CarouselInitial,
+              builder: (context, state) {
+                // Get current index from state
+                final currentIndex = state is CarouselPageChanged 
+                    ? state.currentIndex 
+                    : state is TasksTypeChanged 
+                        ? state.currentIndex 
+                        : 0;
+                
+                return Row(
+                  children: List.generate(
+                    cubit.taskTypes.length,
+                    (index) => TaskTypeWidget(
+                      model: cubit.taskTypes[index],
+                      onTap: () {
+                        // Use the new selectTaskType method
+                        cubit.selectTaskType(index);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(height: 20.h),
             BlocBuilder<TasksHomeCubit, TasksHomeState>(
               builder: (context, state) {
                 // Get current index from state or use default
                 final currentIndex =
-                    state is CarouselPageChanged ? state.currentIndex : 0;
+                    state is CarouselPageChanged ? state.currentIndex : 
+                    state is TasksTypeChanged ? state.currentIndex : 0;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,12 +101,13 @@ class TasksHomeScreenBody extends StatelessWidget {
                   } else if (state is TasksError) {
                     return Center(child: Text('Error: ${state.message}'));
                   } else {
-                    final ongoingTasks =
-                        context.read<TasksHomeCubit>().ongoingTasks;
+                    // Always show ongoing tasks in the Progress section regardless of selected tab
+                    final ongoingTasks = context.read<TasksHomeCubit>().ongoingTasks;
 
                     if (ongoingTasks.isEmpty) {
                       return Center(
-                          child: Text('No ongoing tasks',
+                          child: Text(
+                              'No ongoing tasks',
                               style: TextStyles.font17DarkBlueSemiBold));
                     }
 

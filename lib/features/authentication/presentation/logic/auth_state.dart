@@ -49,6 +49,16 @@ class PasswordVisibilityChanged extends AuthState {
   List<Object?> get props => [isLoginPasswordVisible, isRegisterPasswordVisible, isRegisterConfirmPasswordVisible];
 }
 
+// Remember me state
+class RememberMeChanged extends AuthState {
+  final bool rememberMe;
+  
+  const RememberMeChanged(this.rememberMe);
+  
+  @override
+  List<Object?> get props => [rememberMe];
+}
+
 // Error states
 class AuthError extends AuthState {
   final String message;

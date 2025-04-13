@@ -6,33 +6,39 @@ import 'package:todo_task/features/tasks/data/models/task_type_model.dart';
 
 class TaskTypeWidget extends StatelessWidget {
   final TaskTypeModel model;
+  final VoidCallback onTap;
+  
   const TaskTypeWidget({
     super.key,
     required this.model,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 20.w),
-      width: 115.w,
-      height: 54.h,
-      decoration: BoxDecoration(
-        color:
-            model.isSelected == true ? Colors.white : ColorsManger.tasksColor,
-        borderRadius: BorderRadius.circular(58),
-        boxShadow: [
-          model.isSelected == true
-              ? BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                )
-              : BoxShadow()
-        ],
-      ),
-      child: Center(
-        child: Text(model.task, style: TextStyles.font14DarkBlueBold),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(right: 20.w),
+        width: 115.w,
+        height: 54.h,
+        decoration: BoxDecoration(
+          color:
+              model.isSelected == true ? Colors.white : ColorsManger.tasksColor,
+          borderRadius: BorderRadius.circular(58),
+          boxShadow: [
+            model.isSelected == true
+                ? BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  )
+                : BoxShadow()
+          ],
+        ),
+        child: Center(
+          child: Text(model.task, style: TextStyles.font14DarkBlueBold),
+        ),
       ),
     );
   }

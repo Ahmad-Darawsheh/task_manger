@@ -3,6 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task/core/theming/colors.dart';
 
 class TextStyles {
+  static TextStyle font54BlackBoldInter = TextStyle(
+    fontSize: 54.sp,
+    fontWeight: FontWeight.w800,
+    color: Color.fromARGB(255, 0, 0, 0),
+    fontFamily: 'Inter',
+  );
+
+  static TextStyle font16BlackRegularInter = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w500,
+    color: Color(0xFF1A1C1E),
+    fontFamily: 'Inter',
+  );
+  
   static TextStyle font24WhiteSemiBold = TextStyle(
     fontSize: 24.sp,
     fontWeight: FontWeight.w600,
@@ -52,6 +66,21 @@ class TextStyles {
     fontFamily: 'Poppins',
   );
 
+  static TextStyle font16GreyRegularInter = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+    color: Colors.grey,
+    fontFamily: 'Inter',
+  );
+
+  static TextStyle font18GreyRegularInter = TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w500,
+    color: Colors.grey,
+    fontFamily: 'Inter',
+  );
+ 
+
   static TextStyle font18GreyRegular = TextStyle(
     fontSize: 18.sp,
     fontWeight: FontWeight.w400,
@@ -92,7 +121,7 @@ class TextStyles {
     fontWeight: FontWeight.w700,
     fontFamily: 'Poppins',
   );
-  
+
   static TextStyle font13GreyRegular = TextStyle(
     fontSize: 13.sp,
     fontWeight: FontWeight.w400,

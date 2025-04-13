@@ -7,18 +7,35 @@ import 'package:todo_task/core/theming/colors.dart';
 import 'package:todo_task/core/theming/styles.dart';
 import 'package:todo_task/core/widgets/design_circle_bottom_left.dart';
 import 'package:todo_task/core/widgets/design_circle_top_right.dart';
+import 'package:todo_task/features/tasks/data/models/task_model.dart';
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/features/tasks/presentation/widgets/tasks_home_widgets/box_minor_details_text.dart';
 
 class BoxWithTaskMinorDetails extends StatelessWidget {
   const BoxWithTaskMinorDetails({
-    super.key, required this.index,
+    super.key, 
+    required this.index,
+    required this.taskType,
   });
+  
   final int index;
+  // taskType: 0 = All Tasks, 1 = Ongoing Tasks, 2 = Completed Tasks
+  final int taskType;
 
   @override
   Widget build(BuildContext context) {
-    final cubit=context.read <TasksHomeCubit>();
+    final cubit = context.read<TasksHomeCubit>();
+    
+    // Get the proper task based on the taskType
+    Task task;
+    if (taskType == 0) {
+      task = cubit.allTasks[index];
+    } else if (taskType == 1) {
+      task = cubit.ongoingTasks[index];
+    } else {
+      task = cubit.completedTasks[index];
+    }
+    
     return Stack(
       children: [
         Container(
@@ -52,14 +69,14 @@ class BoxWithTaskMinorDetails extends StatelessWidget {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    'Project ${cubit.allTasks[index].id}',
+                    'Project ${task.id}',
                     style: TextStyles.font17DarkBlueSemiBold.copyWith(
                       color: Colors.white,
                     ),
                   ),
                 ],
               ),
-              BoxMinorDetailsText(index: index,),
+              BoxMinorDetailsText(index: index, taskType: taskType),
             ],
           ),
         ),

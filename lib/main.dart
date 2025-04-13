@@ -9,7 +9,7 @@ import 'package:todo_task/features/authentication/presentation/logic/auth_cubit.
 import 'package:todo_task/features/tasks/presentation/logic/cubit/tasks_home/tasks_home_cubit.dart';
 import 'package:todo_task/task_manger_app.dart';
 
-void main() async {
+void main() async { 
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
 
   ServicesLocator().setupLocator();
